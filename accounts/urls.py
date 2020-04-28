@@ -11,4 +11,6 @@ urlpatterns = [
     path('book',views.book,name='book'),
     path('availability/<str:fr>/<str:to>/<str:dt>/<str:dt1>',views.availability,name='availability'),
     path('mybookings',views.mybookings,name='mybookings'),
+    path('change_password',views.change_password,name='change_password'),
+    path('seat',views.seat,name='seat'),
 ]

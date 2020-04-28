@@ -19,3 +19,7 @@ class Flight(models.Model):
     Date=models.DateField()
     From=models.CharField(max_length=25)
     To=models.CharField(max_length=25)
+
+class Flightseat(models.Model):
+    seat=models.CharField(max_length=20)
+    svalue=models.BooleanField(default=False)

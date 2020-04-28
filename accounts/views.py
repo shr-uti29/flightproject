@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User, auth
-from .models import Profile,Flight
+from .models import Profile,Flight,Flightseat
 from datetime import date, datetime
 from accounts.forms import EditProfileForm,ProfileForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse
+from django.contrib.auth.forms import UserChangeForm,PasswordChangeForm
 
 
 
@@ -69,26 +70,27 @@ def main(request):
 
 def logout(request):
     auth.logout(request)
-    return render(request,'home.html')
+    return redirect('home')
     
 @login_required
 def edit(request):
-    user=User.objects.get(request.user)
-    profile=Profile.objects.get()
-    form = EditProfileForm(request.POST or None,instance=user)
-    profile_form = ProfileForm(request.POST or None,instance=request.user)
+    
     if request.method == 'POST':
-        if form.is_valid() and profile_form.is_valid():
+        user=User.objects.get(username=request.user.get_username())
+        form= EditProfileForm(request.POST,instance=user)
+        profile_form= ProfileForm(request.POST,instance=Profile.objects.get(user=user))
+
+        print(form.errors)
+        print(profile_form.errors)
+        if form.is_valid and profile_form.is_valid:
             form.save()
             profile_form.save()
-            return redirect('main') 
-        else:
-            form = EditProfileForm(instance=request.user)
-            profile_form = ProfileForm(instance=request.user)
-            args={'form':form,'profile_form':profile_form}
-            return render(request,'editprofile.html',args)
+            return redirect('main')
     else:
-        return HttpResponse(template.render(variables))
+        user=User.objects.get(username=request.user.get_username())
+        form= EditProfileForm(instance=user)  
+        profile_form= ProfileForm(instance=Profile.objects.get(user=user))
+        return render(request,'editprofile.html',{'form':form,'profile_form':profile_form})
 
 def book(request):
     if request.method == 'POST':
@@ -117,9 +119,62 @@ def availability(request,fr,to,dt,dt1):
         #f=Flight.objects.raw('SELECT * FROM accounts_flight WHERE FlightNo = %s', [fno])
         f=Flight.objects.filter(FlightNo=fno)
         print(f)
+        return redirect('seat')
+    
+
     return render(request,'book.html',{'schedule':schedule,'scheduler':scheduler})
 
 
 def mybookings(request):
      return render(request,'currentbook.html')
+
+def change_password(request):
+    if request.method == 'POST':
+        form= PasswordChangeForm(data=request.POST,user=request.user)
+
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request,form.user)
+            return redirect('main')
+        else:
+            return redirect('change_password')
+    else:
+        form = PasswordChangeForm(user=request.user)
+        args={'form':form}
+        return render(request,'change_password.html',args)
+
+def seat(request):
+    
+    for i in range(0,10):
+       
+        result1=Flightseat.objects.all().order_by('id')[:6]
+        result3=Flightseat.objects.all().order_by('id')[6:12]
+        result4=Flightseat.objects.all().order_by('id')[12:18]
+        result2=Flightseat.objects.filter(svalue=True).order_by('id')[:i+2]
+    print(result1)
+    print(result3)
+    print(result4)
+    print(result2)
+    #paginator = Paginator(result1, 6)
+    if request.method=='POST':
+        seat=request.POST['button']
+        print(seat)
+       
+        if Flightseat.objects.filter(seat=seat).exists():
+            value=Flightseat.objects.get(seat=seat)
+            if value.svalue==False:
+                value.svalue=True
+                value.save()
+                result2=Flightseat.objects.filter(svalue=True).order_by('id')
+                print("seat is booked")
+                return render(request,'seat.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4 })
+            elif value.svalue==True:
+                print("seat is already occupied. Please select another seat")
+                return render(request,'seat.html',{ 'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+        else:
+            return render(request,'seat.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+
+    else:
+          
+        return render(request,'seat.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
 
