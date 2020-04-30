@@ -19,7 +19,19 @@ class Flight(models.Model):
     Date=models.DateField()
     From=models.CharField(max_length=25)
     To=models.CharField(max_length=25)
+    Price = models.IntegerField()
 
 class Flightseat(models.Model):
     seat=models.CharField(max_length=20)
     svalue=models.BooleanField(default=False)
+
+class Booking(models.Model):
+    Username = models.CharField(max_length=50)
+    FlightNo=models.CharField(max_length=10)
+    Departure=models.TimeField()
+    Arrival=models.TimeField()
+    Date=models.DateField()
+    From=models.CharField(max_length=25)
+    To=models.CharField(max_length=25)
+    Seats = models.IntegerField(null=0)
+    Price = models.IntegerField(null=0)

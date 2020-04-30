@@ -101,8 +101,53 @@
         
         </div>
       </div>
+      <div id="tablesreturn">
+        <div  class="title">
+          <h3>RETURN FLIGHTS</h3>
+        </div>
+      
+          <div style="right:200px" class="col-lg-8 col-md-10 ml-auto mr-auto">
+            
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-center">#</th>
+                    <th>Flights Available</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Date</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th class="text-right"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {%for sr in scheduler%}
+                  <tr>
+                    <td class="text-center">{{sr.id}}</td>
+                    <td>{{sr.FlightNo}}</td>
+                    <td>{{sr.Departure}}</td>
+                    <td>{{sr.Arrival}}</td>
+                    <td>{{sr.Date}}</td>
+                    <td>{{sr.From}}</td>
+                    <td>{{sr.To}}</td>
+                    <td>{{sr.Price}}</td>
+                    <td>
+                      <input type="checkbox" id="FlightNo" name="ret" value={{sr.FlightNo}}>
+                    </td>
+                    {%endfor%}
+                  </tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            
+            </div>
+          </div>
           <div class="text-center"> 
-              <input type="hidden" id="custId" name="Id" value={{s.FlightNo}}>
+              <input type="hidden" id="custId" name="Id" value={{sr.FlightNo}}>
               <button type="submit" style="border-radius:12px;width:100px;padding-bottom:40px;padding-top:0px;font-size:15px;text-align:center" rel="tooltip" class="btn btn-success btn-round btn-just-icon btn-sm">
               <i class="material-icons">select</i>book
               </button>
