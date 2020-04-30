@@ -14,6 +14,8 @@ urlpatterns = [
     path('mybookings',views.mybookings,name='mybookings'),
     path('change_password',views.change_password,name='change_password'),
     path('seat',views.seat,name='seat'),
-    path('seat_ret',views.seat_ret,name='seat_ret'),
+    path('seat_ret1',views.seat_ret1,name='seat_ret1'),
+    path('seat_ret2',views.seat_ret2,name='seat_ret2'),
     path('payment',views.payment,name='payment'),
+    path('payment_ret',views.payment_ret,name='payment_ret'),
 ]

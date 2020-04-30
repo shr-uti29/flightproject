@@ -11,6 +11,10 @@ from django.urls import reverse
 from django.contrib.auth.forms import UserChangeForm,PasswordChangeForm
 j=0
 oneway=''
+ret1=''
+ret2=''
+r1=0
+r2=0
 
 # Create your views here.
 def register(request):
@@ -134,6 +138,10 @@ def availability(request,fr,to,dt,dt1):
     if request.method == 'POST':
         fno= request.POST.get('onward')
         rno= request.POST.get('ret')
+        global ret1
+        global ret2
+        ret1=fno
+        ret2=rno
         print(fno)
         print(rno)
         #f=Flight.objects.raw('SELECT * FROM accounts_flight WHERE FlightNo = %s', [fno])
@@ -141,7 +149,7 @@ def availability(request,fr,to,dt,dt1):
         r=Flight.objects.filter(FlightNo=rno)
         print(f)
         print(r)
-        return redirect('seat_ret')
+        return redirect('seat_ret1')
     
     return render(request,'bookreturn.html',{'schedule':schedule,'scheduler':scheduler})
 
@@ -179,53 +187,14 @@ def seat(request):
     #paginator = Paginator(result1, 6)
     if request.method=='POST':
         seat=request.POST['button']
-        no= int(request.POST.get('number'))
+        #no= int(request.POST.get('number'))
         global j
         j=j+1
         print(seat)
-        print(no)
+        #print(no)
         print(j)
-        for i in range(0,no):
+        
 
-            if Flightseat.objects.filter(seat=seat).exists():
-                value=Flightseat.objects.get(seat=seat)
-                if value.svalue==False:
-                    value.svalue=True
-                    value.save()
-                    result2=Flightseat.objects.filter(svalue=True).order_by('id')
-                    result1=Flightseat.objects.filter(svalue=False).order_by('id')[:6]
-                    result3=Flightseat.objects.filter(svalue=False).order_by('id')[6:12]
-                    result4=Flightseat.objects.filter(svalue=False).order_by('id')[12:18]
-                    print("seat is booked")
-                    return render(request,'seatwc.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4}) 
-                elif value.svalue==True:
-                    print("seat is already occupied. Please select another seat")
-                    return render(request,'seatwc.html',{ 'result2':result2,'result1':result1,'result3':result3,'result4':result4})
-            else:
-                return render(request,'seatwc.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
-        if(i==no):
-            return redirect('payment')
-    else:
-          
-        return render(request,'seatwc.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
-
-def seat_ret(request):
-    for i in range(0,10):
-       
-        result1=Flightseat.objects.filter(svalue=False).order_by('id')[:6]
-        result3=Flightseat.objects.filter(svalue=False).order_by('id')[6:12]
-        result4=Flightseat.objects.filter(svalue=False).order_by('id')[12:18]
-        result2=Flightseat.objects.filter(svalue=True).order_by('id')[:i+2]
-    #print(result1)
-    #print(result3)
-    #print(result4)
-    #print(result2)
-    #paginator = Paginator(result1, 6)
-    if request.method=='POST':
-        seat=request.POST['button']
-        no= request.POST.get('number')
-        print(seat)
-        print(no)
         if Flightseat.objects.filter(seat=seat).exists():
             value=Flightseat.objects.get(seat=seat)
             if value.svalue==False:
@@ -242,11 +211,96 @@ def seat_ret(request):
                 return render(request,'seatwc.html',{ 'result2':result2,'result1':result1,'result3':result3,'result4':result4})
         else:
             return render(request,'seatwc.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
-
+        
+        return redirect('payment')
     else:
           
         return render(request,'seatwc.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+
+def seat_ret1(request):
+    for i in range(0,10):
+       
+        result1=Flightseat.objects.filter(svalue=False).order_by('id')[:6]
+        result3=Flightseat.objects.filter(svalue=False).order_by('id')[6:12]
+        result4=Flightseat.objects.filter(svalue=False).order_by('id')[12:18]
+        result2=Flightseat.objects.filter(svalue=True).order_by('id')[:i+2]
+    #print(result1)
+    #print(result3)
+    #print(result4)
+    #print(result2)
+    #paginator = Paginator(result1, 6)
+    if request.method=='POST':
+        seat=request.POST['button']
+        global r1
+        r1=r1+1
+        print(seat)
+        #print(no)
+        print(r1)
+        
+        if Flightseat.objects.filter(seat=seat).exists():
+            value=Flightseat.objects.get(seat=seat)
+            if value.svalue==False:
+                value.svalue=True
+                value.save()
+                result2=Flightseat.objects.filter(svalue=True).order_by('id')
+                result1=Flightseat.objects.filter(svalue=False).order_by('id')[:6]
+                result3=Flightseat.objects.filter(svalue=False).order_by('id')[6:12]
+                result4=Flightseat.objects.filter(svalue=False).order_by('id')[12:18]
+                print("seat is booked")
+                return render(request,'seat_ret.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4}) 
+            elif value.svalue==True:
+                print("seat is already occupied. Please select another seat")
+                return render(request,'seat_ret.html',{ 'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+        else:
+            return render(request,'seat_ret.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+
+        return redirect('seat_ret2')
+    else:
+          
+        return render(request,'seat_ret.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
     
+def seat_ret2(request):
+    for i in range(0,10):
+       
+        result1=Flightseat.objects.filter(svalue=False).order_by('id')[:6]
+        result3=Flightseat.objects.filter(svalue=False).order_by('id')[6:12]
+        result4=Flightseat.objects.filter(svalue=False).order_by('id')[12:18]
+        result2=Flightseat.objects.filter(svalue=True).order_by('id')[:i+2]
+    #print(result1)
+    #print(result3)
+    #print(result4)
+    #print(result2)
+    #paginator = Paginator(result1, 6)
+    if request.method=='POST':
+        seat=request.POST['button']
+        global r2
+        r2=r2+1
+
+        print(seat)
+        print(r2)
+
+        if Flightseat.objects.filter(seat=seat).exists():
+            value=Flightseat.objects.get(seat=seat)
+            if value.svalue==False:
+                value.svalue=True
+                value.save()
+                result2=Flightseat.objects.filter(svalue=True).order_by('id')
+                result1=Flightseat.objects.filter(svalue=False).order_by('id')[:6]
+                result3=Flightseat.objects.filter(svalue=False).order_by('id')[6:12]
+                result4=Flightseat.objects.filter(svalue=False).order_by('id')[12:18]
+                print("seat is booked")
+                return render(request,'seat_ret2.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4}) 
+            elif value.svalue==True:
+                print("seat is already occupied. Please select another seat")
+                return render(request,'seat_ret2.html',{ 'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+        else:
+            return render(request,'seat_ret2.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+
+        return redirect('payment_ret')
+    else:
+          
+        return render(request,'seat_ret2.html',{'result2':result2,'result1':result1,'result3':result3,'result4':result4})
+
 def payment(request):
     global oneway
     global j
@@ -255,9 +309,33 @@ def payment(request):
     print(p)
     cost=p*j
     print(cost)
-
     b= Booking(Username=request.user.get_username(),FlightNo=oneway,Departure=fl.Departure,Arrival=fl.Arrival,Date=fl.Date,From=fl.From,To=fl.To,Seats=j,Price=cost)
     b.save()
+    j=0
     return render(request,'payment.html',{'cost':cost})
+
+def payment_ret(request):
+    global ret1
+    global ret2
+    global r1
+    global r2
+    fl=Flight.objects.get(FlightNo=ret1)
+    fli=Flight.objects.get(FlightNo=ret2)
+    p=fl.Price
+    pr=fli.Price
+    print(p)
+    print(pr)
+    cost1=p*r1
+    cost2=pr*r2
+    print(cost1)
+    print(cost2)
+    cost3=cost2+cost1
+    b= Booking(Username=request.user.get_username(),FlightNo=ret1,Departure=fl.Departure,Arrival=fl.Arrival,Date=fl.Date,From=fl.From,To=fl.To,Seats=r1,Price=cost1)
+    b.save()
+    b1=Booking(Username=request.user.get_username(),FlightNo=ret2,Departure=fli.Departure,Arrival=fli.Arrival,Date=fli.Date,From=fli.From,To=fli.To,Seats=r2,Price=cost2)
+    b1.save()
+    r1=0
+    r2=0
+    return render(request,'payment.html',{'cost':cost3})
     
 
