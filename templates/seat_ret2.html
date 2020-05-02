@@ -49,8 +49,35 @@
         <div class="col-lg-5 col-md-6 col-sm-8 ml-auto mr-auto">
           <form class="form" method="POST" action="">
             {% csrf_token %}
-            <div class="card card-login card-hidden">
-              <div class="card-header card-header-primary text-center">
+            <table class="table">
+              <thead bgcolor='white'>
+                <tr>
+                  
+                  <th>Flights Available</th>
+                  <th>Departure Time</th>
+                  <th>Arrival Time</th>
+                  <th>Date</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th class="text-right"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {%for s in schedule%}
+                <tr>
+                  
+                  <td>{{s.FlightNo}}</td>
+                  <td>{{s.Departure}}</td>
+                  <td>{{s.Arrival}}</td>
+                  <td>{{s.Date}}</td>
+                  <td>{{s.From}}</td>
+                  <td>{{s.To}}</td>
+                  {%endfor%}
+                </tr>
+              </tbody>
+              </table>
+            <div class="card bg-rose card-login card-hidden">
+              <div class="card-header card-header-info text-center">
                 <h4 class="card-title">Availability</h4>
                 
               </div>
@@ -113,10 +140,13 @@
                 <input type="Submit" value="Book" onclick="">
                 <a class="btn btn-primary" href="payment_ret">Proceed</a>
               </div>
+              {%for m in messages%}
+                <h4>{{m}}</h4>
+              {%endfor%}
             </div>
              <!--card2-right-->
        <div style="right:-500px;bottom:370px" class="col-lg-8 col-md-6">
-        <div class="card bg-info">
+        <div class="card bg-warning">
           <div class="card-body ">
             <h5 class="card-category card-category-social">
               <i ></i> Seats

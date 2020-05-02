@@ -29,28 +29,19 @@
     <div class="container d-flex">
 
       <div class="logo mr-auto">
-        <h1 class="text-light"><a href="index.html"><span>GO</span>Corona</a></h1>
+        <h1 class="text-light"><a ><span>GO</span>Corona</a></h1>
       </div>
 
       <nav class="nav-menu d-none d-lg-block">
         <ul>
           <li class="active"><a href="#header">Home</a></li>
           <li><a href="#about">About</a></li>
-          <li><a href="#specialoffer">Special Offers</a></li>
-          <li class="drop-down"><a href="">Contact Us</a>
+          <li class='drop-down'><a href="">Special Offers</a>
             <ul>
-              <li><a href="#">Customer Support</a></li>
-              <li class="drop-down"><a href="#">Contact</a>
-                <ul>
-                  <li><a href="#">Call:1800-090-087</a></li>
-                  <li><a href="#">Email</a></li>
-                  <li><a href="#">Message</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Feedback</a></li>
-              <li><a href="#">Complaint</a></li>
+              <li>Due To Lockdown, Currently There Are No Special Offers</li>
             </ul>
           </li>
+          <li class=><a href="#contact">Contact Us</a></li>
           <li><a href="accounts/login">Login</a></li>
           <li><a href="accounts/register">Signup</a></li>
           
@@ -271,8 +262,9 @@
 
 
              <div class="col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center">
-              <div class="form contact-form">
-                <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+              <!--div class="form contact-form"-->
+                <form action="" method="post" >
+                  {%csrf_token%}
                   <div class="form-group">
                     <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
                     <div class="validate"></div>
@@ -289,14 +281,16 @@
                     <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
                     <div class="validate"></div>
                   </div>
-                  <div class="mb-3">
-                    <div class="loading">Loading</div>
-                    <div class="error-message"></div>
-                    <div class="sent-message">Your message has been sent. Thank you!</div>
-                  </div>
+                  
                   <div class="text-center"><button type="submit">Give Feedback</button></div>
+                  <div class="text-center">
+                    {% for message in messages %}
+                      <h3><center>{{message}}</center></h3>
+                    {% endfor %}
+                  </div>
                 </form>
               </div>
+              
             </div>
             
            
