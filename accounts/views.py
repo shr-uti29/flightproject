@@ -29,7 +29,7 @@ def register(request):
         Contact = request.POST['Contact']
         Address = request.POST['Address']
         DOB=datetime.strptime(request.POST['DOB'],'%Y-%m-%d').date()
-        Gender = request.POST['Gender']
+        Gender = request.POST['gender']
         
 
         if password1==password2:
